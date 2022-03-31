@@ -34,17 +34,6 @@ impl Bitboard { /** Creates a new empty bitboard. */
     }
   }
 
-  // pub(crate) fn all_squares_occupied(&self) -> Vec<Square> {
-  //   let mut res = Vec::new();
-  //   for i in 0..64 {
-  //     let square = Square::from(i);
-  //     if self.is_square_occupied(square) {
-  //       res.push(square);
-  //     }
-  //   }
-  //   res
-  // }
-
   pub const fn bb(&self) -> u64 {
     self.bb
   }
