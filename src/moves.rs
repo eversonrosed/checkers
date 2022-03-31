@@ -20,11 +20,11 @@ use crate::game::{Checkerboard, Color};
     Down right jump = -14
  */
 
-pub fn piece_moves(color: Color, king: bool, square: Bitboard) -> Bitboard {
-  let ul = (square & !LEFT_EDGE & !TOP_EDGE) << 7;
-  let ur = (square & !RIGHT_EDGE & !TOP_EDGE) << 9;
-  let dl = (square & !LEFT_EDGE & !BOTTOM_EDGE) >> 9;
-  let dr = (square & !RIGHT_EDGE & !BOTTOM_EDGE) >> 7;
+pub fn piece_moves(color: Color, king: bool, squares: Bitboard) -> Bitboard {
+  let ul = (squares & !LEFT_EDGE & !TOP_EDGE) << 7;
+  let ur = (squares & !RIGHT_EDGE & !TOP_EDGE) << 9;
+  let dl = (squares & !LEFT_EDGE & !BOTTOM_EDGE) >> 9;
+  let dr = (squares & !RIGHT_EDGE & !BOTTOM_EDGE) >> 7;
   if king {
     ul | ur | dl | dr
   } else {
@@ -35,13 +35,13 @@ pub fn piece_moves(color: Color, king: bool, square: Bitboard) -> Bitboard {
   }
 }
 
-pub fn piece_captures(board: &Checkerboard, color: Color, king: bool, square: Bitboard) -> Bitboard {
+pub fn piece_captures(board: &Checkerboard, color: Color, king: bool, squares: Bitboard) -> Bitboard {
   let opponents = board.opponents(color);
   let empty = board.empty();
-  let ul = ((((square & !LEFT_TWO & !TOP_TWO) << 7) & opponents) << 7) & empty;
-  let ur = ((((square & !RIGHT_TWO & !TOP_TWO) << 9) & opponents) << 9) & empty;
-  let dl = ((((square & !LEFT_TWO & !BOTTOM_TWO) >> 9) & opponents) >> 9) & empty;
-  let dr = ((((square & !RIGHT_TWO & !BOTTOM_TWO) >> 7) & opponents) >> 7) & empty;
+  let ul = ((((squares & !LEFT_TWO & !TOP_TWO) << 7) & opponents) << 7) & empty;
+  let ur = ((((squares & !RIGHT_TWO & !TOP_TWO) << 9) & opponents) << 9) & empty;
+  let dl = ((((squares & !LEFT_TWO & !BOTTOM_TWO) >> 9) & opponents) >> 9) & empty;
+  let dr = ((((squares & !RIGHT_TWO & !BOTTOM_TWO) >> 7) & opponents) >> 7) & empty;
   if king {
     ul | ur | dl | dr
   } else {
