@@ -26,29 +26,9 @@ impl Bitboard { /** Creates a new empty bitboard. */
     Bitboard { bb }
   }
 
-  pub const fn is_square_occupied(&self, sq: u32) -> bool {
-    if sq > 31 {
-      false
-    } else {
-      self.bb & (1 << sq) == 1
-    }
-  }
-
-  pub const fn bb(&self) -> u64 {
-    self.bb
-  }
-
   pub const fn is_single_square(&self) -> bool {
     let bb = self.bb;
     bb != 0 && (bb & (bb - 1) == 0)
-  }
-
-  pub const fn exclude_square(&self, sq: u32) -> Bitboard {
-    if sq > 63 {
-      *self
-    } else {
-      Bitboard::from_u64(self.bb & !(1 << sq))
-    }
   }
 
   pub const fn is_empty(&self) -> bool {

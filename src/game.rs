@@ -72,7 +72,7 @@ impl Checkerboard {
       !color
     } else {
       self.pieces[index] |= end_square;
-      let more_captures = piece_captures(board, color, king, end_square).is_not_empty();
+      let more_captures = piece_captures(self, color, king, end_square).is_not_empty();
       if more_captures {
         color
       } else {
