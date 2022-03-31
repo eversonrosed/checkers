@@ -30,27 +30,26 @@ impl Checkerboard {
     }
   }
 
-  pub fn make_move(&mut self, start_square: Bitboard, end_square: Bitboard) {
+  /**
+    Attempts to make a move. Returns the color of the player who will make next move (same color
+    if move is invalid or extra captures available).
+   */
+  pub fn make_move(&mut self, color: Color, start_square: Bitboard, end_square: Bitboard) -> Color {
     // this function only works for single squares
     if !start_square.is_single_square() || !end_square.is_single_square() {
-      return;
+      return color;
     }
 
-    let white = (start_square & (self.pieces[WHITE_MEN] | self.pieces[WHITE_KINGS])).is_not_empty();
-    let black = (start_square & (self.pieces[BLACK_MEN] | self.pieces[BLACK_KINGS])).is_not_empty();
-    let color = match (white, black) {
-      (false, false) => return, // square is empty
-      (false, true) => Color::Black,
-      (true, false) => Color::White,
-      (true, true) => panic!("White and black pieces in the same square")
-    };
-    let king = (start_square & (self.pieces[WHITE_KINGS] | self.pieces[BLACK_KINGS])).is_not_empty();
+    let king = (start_square & self.kings(color)).is_not_empty();
+    if !king && (start_square & self.men(color)).is_not_empty() {
+      return color;
+    }
 
     let move_bb = piece_moves(color, king, start_square) & end_square;
     let capture_bb = piece_captures(self, color, king, start_square) & end_square;
     let must_capture = color_captures(self, color).is_not_empty();
     if (capture_bb | move_bb).is_empty() || capture_bb.is_empty() && must_capture {
-      return;
+      return color;
     }
 
     let index = Checkerboard::index(color, king);
@@ -70,8 +69,15 @@ impl Checkerboard {
     };
     if (end_square & promotion_edge).is_not_empty() && !king {
       self.pieces[index + 2] |= end_square;
+      !color
     } else {
       self.pieces[index] |= end_square;
+      let more_captures = piece_captures(board, color, king, end_square).is_not_empty();
+      if more_captures {
+        color
+      } else {
+        !color
+      }
     }
   }
 
