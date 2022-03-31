@@ -29,11 +29,11 @@ mod tests {
   #[test]
   fn pieces_move() {
     let rmbb = Bitboard::from((1 << 25) | (1 << 27));
-    assert_eq!(rmbb, piece_moves(Color::Red, false, Bitboard::from(1 << 18)));
+    assert_eq!(rmbb, piece_moves(Color::White, false, Bitboard::from(1 << 18)));
     let bmbb = Bitboard::from((1 << 9) | (1 << 11));
     assert_eq!(bmbb, piece_moves(Color::Black, false, Bitboard::from(1 << 18)));
     let kbb = Bitboard::from((1 << 9) | (1 << 11) | (1 << 25) | (1 << 27));
-    assert_eq!(kbb, piece_moves(Color::Red, true, Bitboard::from(1 << 18)));
+    assert_eq!(kbb, piece_moves(Color::White, true, Bitboard::from(1 << 18)));
     assert_eq!(kbb, piece_moves(Color::Black, true, Bitboard::from(1 << 18)));
   }
 

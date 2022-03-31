@@ -29,7 +29,7 @@ pub fn piece_moves(color: Color, king: bool, square: Bitboard) -> Bitboard {
     ul | ur | dl | dr
   } else {
     match color {
-      Color::Red => ul | ur,
+      Color::White => ul | ur,
       Color::Black => dl | dr
     }
   }
@@ -46,7 +46,7 @@ pub fn piece_captures(board: &Checkerboard, color: Color, king: bool, square: Bi
     ul | ur | dl | dr
   } else {
     match color {
-      Color::Red => ul | ur,
+      Color::White => ul | ur,
       Color::Black => dl | dr
     }
   }

@@ -4,9 +4,9 @@ use std::ops::Not;
 use crate::bitboard::{Bitboard, BOTTOM_EDGE, TOP_EDGE};
 use crate::moves::{color_captures, piece_captures, piece_moves};
 
-const RED_MEN: usize = 0;
+const WHITE_MEN: usize = 0;
 const BLACK_MEN: usize = 1;
-const RED_KINGS: usize = 2;
+const WHITE_KINGS: usize = 2;
 const BLACK_KINGS: usize = 3;
 
 #[derive(Debug)]
@@ -23,9 +23,9 @@ impl Checkerboard {
 
   pub fn index(color: Color, king: bool) -> usize {
     match (color, king) {
-      (Color::Red, false) => RED_MEN,
+      (Color::White, false) => WHITE_MEN,
       (Color::Black, false) => BLACK_MEN,
-      (Color::Red, true) => RED_KINGS,
+      (Color::White, true) => WHITE_KINGS,
       (Color::Black, true) => BLACK_KINGS
     }
   }
@@ -36,17 +36,15 @@ impl Checkerboard {
       return;
     }
 
-    // println!("{}", self.pieces[RED_MEN]);
-    // println!("{}", self.pieces[BLACK_MEN]);
-    let red = (start_square & (self.pieces[RED_MEN] | self.pieces[RED_KINGS])).is_not_empty();
+    let white = (start_square & (self.pieces[WHITE_MEN] | self.pieces[WHITE_KINGS])).is_not_empty();
     let black = (start_square & (self.pieces[BLACK_MEN] | self.pieces[BLACK_KINGS])).is_not_empty();
-    let color = match (red, black) {
+    let color = match (white, black) {
       (false, false) => return, // square is empty
       (false, true) => Color::Black,
-      (true, false) => Color::Red,
-      (true, true) => panic!("Red and black pieces in the same square")
+      (true, false) => Color::White,
+      (true, true) => panic!("White and black pieces in the same square")
     };
-    let king = (start_square & (self.pieces[RED_KINGS] | self.pieces[BLACK_KINGS])).is_not_empty();
+    let king = (start_square & (self.pieces[WHITE_KINGS] | self.pieces[BLACK_KINGS])).is_not_empty();
 
     let move_bb = piece_moves(color, king, start_square) & end_square;
     let capture_bb = piece_captures(self, color, king, start_square) & end_square;
@@ -67,7 +65,7 @@ impl Checkerboard {
 
     self.pieces[index] &= !start_square;
     let promotion_edge = match color {
-      Color::Red => TOP_EDGE,
+      Color::White => TOP_EDGE,
       Color::Black => BOTTOM_EDGE
     };
     if (end_square & promotion_edge).is_not_empty() && !king {
@@ -79,29 +77,29 @@ impl Checkerboard {
 
   pub fn men(&self, color: Color) -> Bitboard {
     match color {
-      Color::Red => self.pieces[RED_MEN],
+      Color::White => self.pieces[WHITE_MEN],
       Color::Black => self.pieces[BLACK_MEN],
     }
   }
 
   pub fn kings(&self, color: Color) -> Bitboard {
     match color {
-      Color::Red => self.pieces[RED_KINGS],
+      Color::White => self.pieces[WHITE_KINGS],
       Color::Black => self.pieces[BLACK_KINGS]
     }
   }
 
   pub fn opponents(&self, color: Color) -> Bitboard {
     match color {
-      Color::Red => self.pieces[BLACK_MEN] | self.pieces[BLACK_KINGS],
-      Color::Black => self.pieces[RED_MEN] | self.pieces[RED_KINGS]
+      Color::White => self.pieces[BLACK_MEN] | self.pieces[BLACK_KINGS],
+      Color::Black => self.pieces[WHITE_MEN] | self.pieces[WHITE_KINGS]
     }
   }
 
   pub fn empty(&self) -> Bitboard {
-    !(self.pieces[RED_MEN]
+    !(self.pieces[WHITE_MEN]
         | self.pieces[BLACK_MEN]
-        | self.pieces[RED_KINGS]
+        | self.pieces[WHITE_KINGS]
         | self.pieces[BLACK_KINGS]
     )
   }
@@ -109,14 +107,14 @@ impl Checkerboard {
 
 impl Display for Checkerboard {
   fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-    let red_men = self.pieces[RED_MEN].to_string();
+    let white_men = self.pieces[WHITE_MEN].to_string();
     let black_men = self.pieces[BLACK_MEN].to_string();
-    let red_kings = self.pieces[RED_KINGS].to_string();
+    let white_kings = self.pieces[WHITE_KINGS].to_string();
     let black_kings = self.pieces[BLACK_KINGS].to_string();
     let mut result = String::new();
-    for (((rm, bm), rk), bk) in red_men.chars()
+    for (((rm, bm), rk), bk) in white_men.chars()
         .zip(black_men.chars())
-        .zip(red_kings.chars())
+        .zip(white_kings.chars())
         .zip(black_kings.chars()) {
       if rm == '1' {
         result.push('O')
@@ -139,7 +137,7 @@ impl Display for Checkerboard {
 
 #[derive(Copy, Clone, Debug)]
 pub enum Color {
-  Red,
+  White,
   Black,
 }
 
@@ -148,8 +146,8 @@ impl Not for Color {
 
   fn not(self) -> Self::Output {
     match self {
-      Color::Red => Color::Black,
-      Color::Black => Color::Red
+      Color::White => Color::Black,
+      Color::Black => Color::White
     }
   }
 }
