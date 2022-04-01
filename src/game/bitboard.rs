@@ -45,16 +45,19 @@ impl Bitboard { /** Creates a new empty bitboard. */
     an empty bitboard.
    */
   pub const fn midsquare(left: Bitboard, right: Bitboard) -> Bitboard {
-    if !left.is_single_square() || !right.is_single_square() {
-      return Bitboard::new()
-    }
-
-    let prod = (left.bb as u128) * (right.bb as u128); // still a power of two
-    let tz = prod.trailing_zeros();
-    if tz & 1 == 0 {
+    let zeros = left.index() + right.index();
+    if zeros < 0 || zeros & 1 != 0 {
       Bitboard::new()
     } else {
-      Bitboard::from_u64(1 << (tz >> 1))
+      Bitboard::from_u64(1 << (zeros >> 1))
+    }
+  }
+
+  pub const fn index(&self) -> i32 {
+    if !self.is_single_square() {
+      -1
+    } else {
+      self.bb.trailing_zeros() as i32
     }
   }
 }
